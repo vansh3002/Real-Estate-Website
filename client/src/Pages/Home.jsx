@@ -120,7 +120,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-            <Swiper navigation>
+            {/* <Swiper navigation>
                 {offerListings && offerListings.length > 0 && offerListings.map((listing) => (
                     <SwiperSlide key={listing._id}>
                         <Link to={`/listing/${listing._id}`}>
@@ -138,7 +138,7 @@ export default function Home() {
                         </Link>
                     </SwiperSlide>
                 ))}
-            </Swiper>
+            </Swiper> */}
 
             <div className='max-w-7xl mx-auto p-3 flex flex-col gap-8 my-10'>
                 {offerListings && offerListings.length > 0 && (
@@ -181,7 +181,25 @@ export default function Home() {
                     </div>
                 )}
             </div>
-
+            <Swiper navigation>
+                {offerListings && offerListings.length > 0 && offerListings.map((listing) => (
+                    <SwiperSlide key={listing._id}>
+                        <Link to={`/listing/${listing._id}`}>
+                            <div
+                                style={{
+                                    backgroundImage: listing.imageUrls && listing.imageUrls.length > 0 ? `url(${listing.imageUrls[0]})` : `url('${im}')`,
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundSize: 'cover',
+                                    height: '500px',
+                                }}
+                                className='h-[500px]'
+                                key={listing._id}
+                            ></div>
+                        </Link>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
             <div className="max-w-7xl mx-auto p-3 my-10">
                 <h2 className='text-2xl font-semibold text-slate-700 mb-4'>Real Estate Market News</h2>
                 <Swiper

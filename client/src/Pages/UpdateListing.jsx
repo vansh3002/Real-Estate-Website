@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage';
 import { app } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useFormik } from "formik";
+import Select from "react-select";
+import { Country, State, City } from 'country-state-city';
+import Header from '../Component/Header';
+import Err from './ERR';
+
 
 export default function UpdateListing() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const params = useParams();
   const [files, setFiles] = useState([]);
+  const [country, setCountry] = useState(null);
+  const [state, setState] = useState(null);
+  const [city, setCity] = useState(null);
   const [formData, setFormData] = useState({
     imageUrls: [],
     name: '',
@@ -27,7 +31,11 @@ export default function UpdateListing() {
     offer: false,
     parking: false,
     furnished: false,
+    country:'',
+    state:'',
+    city:'',
   });
+  console.log(formData)
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
@@ -43,6 +51,9 @@ export default function UpdateListing() {
         return;
       }
       setFormData(data);
+      setCountry({ label: data.country, value: data.country });
+      setState({ label: data.state, value: data.state });
+      setCity({ label: data.city, value: data.city });
     };
 
     fetchListing();
@@ -142,8 +153,8 @@ export default function UpdateListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.imageUrls.length < 1)
-        return setError('You must upload at least one image');
+      // if (formData.imageUrls.length < 1)
+      //   return setError('You must upload at least one image');
       if (+formData.regularPrice < +formData.discountPrice)
         return setError('Discount price must be lower than regular price');
       setLoading(true);
@@ -156,6 +167,9 @@ export default function UpdateListing() {
         body: JSON.stringify({
           ...formData,
           userRef: currentUser._id,
+          country:country.label,
+          state:state.label,
+          city:city.label,
         }),
       });
       const data = await res.json();
@@ -169,69 +183,67 @@ export default function UpdateListing() {
       setLoading(false);
     }
   };
+  const countries = Country.getAllCountries().map((country) => ({
+    label: country.name,
+    value: country.isoCode,
+  }));
+
+  const handleCountryChange = (selectedCountry) => {
+    setCountry(selectedCountry);
+    setState(null);
+    setCity(null);
+    setFormData({ ...formData, country: selectedCountry.label, state: '', city: '' });
+  };
+
+  const handleStateChange = (selectedState) => {
+    setState(selectedState);
+    setCity(null);
+    setFormData({ ...formData, state: selectedState.label, city: '' });
+  };
+
+  const handleCityChange = (selectedCity) => {
+    setCity(selectedCity);
+    setFormData({ ...formData, city: selectedCity.label });
+  };
+
+  const states = country ? State.getStatesOfCountry(country.value).map((state) => ({
+    label: state.name,
+    value: state.isoCode,
+  })) : [];
+
+  const cities = state ? City.getCitiesOfState(country.value, state.value).map((city) => ({
+    label: city.name,
+    value: city.isoCode,
+  })) : [];
+
   return (
-    <main className='p-3 max-w-4xl mx-auto'>
+    <div>
+      <Header backgroundColor='#0D47A1' />
+    <main className='p-14 max-w-4xl mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
         Update a Listing
       </h1>
       <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
         <div className='flex flex-col gap-4 flex-1'>
-          <input
-            type='text'
-            placeholder='Name'
-            className='border p-3 rounded-lg'
-            id='name'
-            maxLength='62'
-            minLength='10'
-            required
-            onChange={handleChange}
-            value={formData.name}
-          />
-          <textarea
-            type='text'
-            placeholder='Description'
-            className='border p-3 rounded-lg'
-            id='description'
-            required
-            onChange={handleChange}
-            value={formData.description}
-          />
-          <input
-            type='text'
-            placeholder='Address'
-            className='border p-3 rounded-lg'
-            id='address'
-            required
-            onChange={handleChange}
-            value={formData.address}
-          />
+          <input type='text' placeholder='Name' className='border p-3 rounded-lg' id='name' maxLength='62' minLength='10' required onChange={handleChange} value={formData.name}/>
+          <textarea type='text' placeholder='Description' className='border p-3 rounded-lg' id='description' required onChange={handleChange} value={formData.description}/>
+          <input type='text'  placeholder='Address' className='border p-3 rounded-lg' id='address' required onChange={handleChange} value={formData.address} />
+          <div className='flex flex-col gap-4'>
+              <Select options={countries} value={country} required onChange={handleCountryChange} placeholder="Select Country" className='w-full' />
+              <Select options={states} value={state} required onChange={handleStateChange} placeholder="Select State" className='w-full'/>
+              <Select options={cities} value={city} required onChange={handleCityChange} placeholder="Select City" className='w-full'  />
+            </div>          
           <div className='flex gap-6 flex-wrap'>
             <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='sale'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.type === 'sale'}
-              />
+              <input type='checkbox' id='sale'  className='w-5' onChange={handleChange} checked={formData.type === 'sale'} />
               <span>Sell</span>
             </div>
             <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='rent'
-                className='w-5'
-                onChange={handleChange}
-                checked={formData.type === 'rent'}
-              />
+              <input type='checkbox' id='rent'  className='w-5' onChange={handleChange} checked={formData.type === 'rent'} />
               <span>Rent</span>
             </div>
             <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='parking'
-                className='w-5'
-                onChange={handleChange}
+              <input type='checkbox'  id='parking'   className='w-5'  onChange={handleChange}
                 checked={formData.parking}
               />
               <span>Parking spot</span>
@@ -382,5 +394,6 @@ export default function UpdateListing() {
         </div>
       </form>
     </main>
+    </div>
   );
 }

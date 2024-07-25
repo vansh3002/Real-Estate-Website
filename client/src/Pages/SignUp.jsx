@@ -1,36 +1,55 @@
 import React, { useState } from 'react';
 import video from 'C:\\REstate\\client\\src\\Login Assets\\110923-689949643_small.mp4';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { FaUserShield, FaEnvelope } from 'react-icons/fa';
 import { BsFillShieldLockFill } from 'react-icons/bs';
 import { AiOutlineSwapRight } from 'react-icons/ai';
+import OAuth from '../Component/OAuth';
+import Header from '../Component/Header';
 
-export default function Signup() {
+
+export default function SignUp() {
   const [formData, setFormData] = useState({});
-  
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    console.log(data);
+    try {
+      setLoading(true);
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
+        return;
+      }
+      setLoading(false);
+      setError(null);
+      navigate('/sign-in');
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+    }
   };
-
   console.log(formData);
 
   return (
+    <div>
+      <Header/>
     <div className='loginPage flex justify-center items-center'>
       <div className='container relative' style={{ maxWidth: '100%' }}>
         <div className="videoDiv">
@@ -85,11 +104,14 @@ export default function Signup() {
                   <span>Register</span>
                   <AiOutlineSwapRight className='icon ml-1' />
                 </button>
+                <div className='my-1'></div>
+                <OAuth />
               </form>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

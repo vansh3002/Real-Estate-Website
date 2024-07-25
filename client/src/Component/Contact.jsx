@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 export default function Contact({ listing }) {
   const [landlord, setLandlord] = useState(null);
   const [message, setMessage] = useState('');
+
   const onChange = (e) => {
     setMessage(e.target.value);
   };
@@ -20,13 +20,20 @@ export default function Contact({ listing }) {
     };
     fetchLandlord();
   }, [listing.userRef]);
+
+  const constructGmailLink = () => {
+    const subject = `Regarding ${listing.name}`;
+    const body = encodeURIComponent(message);
+    const email = landlord.email;
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+  };
+
   return (
     <>
       {landlord && (
         <div className='flex flex-col gap-2'>
           <p>
-            Contact <span className='font-semibold'>{landlord.username}</span>{' '}
-            for{' '}
+            Contact <span className='font-semibold'>{landlord.username}</span> for{' '}
             <span className='font-semibold'>{listing.name.toLowerCase()}</span>
           </p>
           <textarea
@@ -38,13 +45,14 @@ export default function Contact({ listing }) {
             placeholder='Enter your message here...'
             className='w-full border p-3 rounded-lg'
           ></textarea>
-
-          <Link
-          to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
-          className='bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95'
+          <a
+            href={constructGmailLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className='bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95'
           >
-            Send Message          
-          </Link>
+            Send Message
+          </a>
         </div>
       )}
     </>

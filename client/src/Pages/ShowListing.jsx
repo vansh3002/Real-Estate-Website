@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import im from 'C:\\Real Estate\\client\\src\\Login Assets\\real-12.jpg';
+import im from '../Login Assets/q4.jpg';
 import { FcHome } from "react-icons/fc";
 import ReactDOMServer from 'react-dom/server';
-import Header from '../Components/Header';
+import Header from '../Component/Header';
 
 const API_KEY = 'ff4bde7355774d66846794fd78e1a8b5';
 
@@ -162,10 +162,10 @@ export default function ShowListing() {
         <div>
             <Header backgroundColor='#0D47A1' />
             <div className='pt-16'>
-                <h1 className="text-center mt-4 text-2xl font-semibold">Your Listings</h1>
                 <div className="flex">
                     {/* Left Side */}
                     <div className='p-7 border-b-2 md:border-r-2 md:min-h-screen'>
+                        <h2 className='font-semibold text-center text-2xl mb-4'>Filter Properties</h2>
                         <form className='flex flex-col gap-8'>
                             <div className='flex items-center gap-2'>
                                 <label className='whitespace-nowrap font-semibold'>Search Term:</label>
@@ -235,21 +235,18 @@ export default function ShowListing() {
                                     <option value='created_at_asc'>Oldest</option>
                                 </select>
                             </div>
-                            <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity:95'>
-                                Search
-                            </button>
                         </form>
                     </div>
                     {/* Middle Side: Map */}
                     <div className="pt-4 w-3/4 h-screen">
                         {mapCenter ? (
-                            <MapContainer center={mapCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
+                            <MapContainer center={mapCenter} zoom={6} style={{ height: '120%', width: '100%' }}>
                                 <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                 />
-                                {userListing && userListing.length > 0 &&
-                                    userListing.map((listing) => (
+                                {filteredListings && filteredListings.length > 0 &&
+                                    filteredListings.map((listing) => (
                                         <Marker
                                             key={listing._id}
                                             position={[listing.latitude, listing.longitude]}
@@ -281,7 +278,9 @@ export default function ShowListing() {
                         )}
                     </div>
                     {/* Right Side: Listings */}
-                    <div className="w-1/2 p-4 custom-scrollbar">
+                    <div >
+                    <h2 className='font-semibold text-center text-2xl mt-6'>Your Listings</h2>
+                    <div className="w-full p-4 custom-scrollbar">
                         <div className="overflow-y-auto max-h-screen">
                             {filteredListings && filteredListings.length > 0 ? (
                                 filteredListings.map((listing) => (
@@ -312,7 +311,9 @@ export default function ShowListing() {
                             )}
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
     );
+}

@@ -5,15 +5,17 @@ import { app } from '../firebase';
 import images from '../Login Assets/real-111.webp';
 import { updateUserFailure, updateUserStart, updateUserSuccess,deleteUserFailure,deleteUserSuccess,deleteUserStart,signOutUserStart,signOutUserFailure,signOutUserSuccess } from '../Redux/user/userSlice';
 import { Link } from 'react-router-dom';
+import Header from '../Component/Header';
 
 export default function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser} = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [formData, setFormData] = useState({});
   const [fileUploadError, setFileUploadError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [updateSuccess,setUpdateSuccess] = useState([])
 
   const dispatch = useDispatch();
 
@@ -67,13 +69,15 @@ export default function Profile() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      console.log('Response Data:', data);
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
         setLoading(false);
         return;
       }
       console.log('Response Data:', data); 
-      dispatch(updateUserSuccess(data.user)); 
+      dispatch(updateUserSuccess(data)); 
+      setLoading(false)
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     } 
@@ -109,6 +113,8 @@ export default function Profile() {
     }
   };
   return (
+    <div>
+    <Header backgroundColor='#0D47A1' />
     <div className='h-screen flex'>
       <div className='relative w-1/2 h-full'>
         <input onChange={(e) => setFile(e.target.files[0])} type="file" ref={fileRef} hidden accept='image/*' />
@@ -136,7 +142,14 @@ export default function Profile() {
         </div>
       </div>
       <div className='flex flex-col justify-center w-1/2 p-8'>
-        <h1 className='text-3xl font-semibold mb-4'>{currentUser?.username}</h1>
+      <div className='flex justify-between items-center'>
+          <h1 className='text-3xl font-semibold mb-4'>{currentUser?.username}</h1>
+          <Link to="/show-listings">
+            <button className='bg-green-700 text-white rounded-lg p-2 uppercase hover:opacity-95'>
+              Show Listing
+            </button>
+          </Link>
+        </div>
         <p className='text-gray-600 mb-2'>Designer at Medium, previously at Twitter</p>
         <p className='text-gray-600 mb-8'>Creator of Skeleton and co-creator of Ratchet</p>
         <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
@@ -169,12 +182,14 @@ export default function Profile() {
           >
             {loading ? 'Loading...' : 'Update'}
           </button>
+          <Link to="/create-listing" className='bg-green-700 text-white uppercase rounded-lg p-3 hover:opacity-95 disabled:opacity-80 text-center'>Create Listing</Link> 
         </form>
         <div className='flex justify-between mt-4'>
           <span className='text-red-700 cursor-pointer' onClick={handleDeleteUser}>Delete Account</span>
           <span className='text-red-700 cursor-pointer' onClick={handleSignOut}>Sign Out</span>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -29,6 +29,8 @@ export default function Listing() {
   const [contact, setcontact] = useState(false);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
+  // console.log(listing)
+  // console.log(currentUser)
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -93,7 +95,7 @@ export default function Listing() {
                   <div
                     className='h-[450px]'
                     style={{
-                      backgroundImage: `url(${im1})`,
+                      backgroundImage: `url('${im1}')`,
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
                       backgroundSize: 'cover',
@@ -104,7 +106,7 @@ export default function Listing() {
                   <div
                     className='h-[450px]'
                     style={{
-                      backgroundImage: `url(${im2})`,
+                      backgroundImage: `url('${im2}')`,
                       backgroundPosition: 'center',
                       backgroundRepeat: 'no-repeat',
                       backgroundSize: 'cover',
@@ -197,7 +199,7 @@ export default function Listing() {
                 Contact Landlord
               </button>
             )}
-            {contact && <Contact l={listing} />}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}

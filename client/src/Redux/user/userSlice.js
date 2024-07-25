@@ -23,14 +23,17 @@ const userSlice = createSlice({
       state.loading = false;
     },
     updateUserStart: (state) => {
+      console.log('updateUserStart');
       state.loading = true;
     },
     updateUserSuccess: (state, action) => {
+      console.log('updateUserSuccess', action.payload);
       state.currentUser = action.payload;
       state.loading = false;
       state.error = null;
     },
     updateUserFailure: (state, action) => {
+      console.log('updateUserFailure', action.payload);
       state.error = action.payload;
       state.loading = false;
     },
