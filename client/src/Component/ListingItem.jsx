@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MdLocationOn } from 'react-icons/md';
-import im from "C:\\REstate\\client\\src\\Login Assets\\q3.webp"
+import im from "../Login Assets/q3.webp"
 
 export default function ListingItem({ listing }) {
   return (
