@@ -9,7 +9,7 @@ import 'swiper/css/navigation';
 import 'swiper/swiper-bundle.css';
 import ListingItem from '../Component/ListingItem';
 import im from "../Login Assets/q3.webp";
-import vid from "C:\\REstate\\client\\src\\Login Assets\\7578552-uhd_3840_2160_30fps.mp4";
+import vid from "../Login Assets/78552-uhd_3840_2160_30fps.mp4";
 import Header from '../Component/Header';
 import Footer from '../Component/Footer';
 
