@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import video from 'C:\\REstate\\client\\src\\Login Assets\\110923-689949643_small.mp4';
+import video from '../Login Assets/110923-689949643_small.mp4';
 import { Link ,useNavigate} from 'react-router-dom';
 import { FaUserShield, FaEnvelope } from 'react-icons/fa';
 import { BsFillShieldLockFill } from 'react-icons/bs';
