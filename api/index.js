@@ -9,8 +9,8 @@ import listingRouter from './routrs/listingroute.js';
 import path from 'path'
 
 dotenv.config();
-
-mongoose.connect("mongodb+srv://vansh3002singh:rathoretheta@rathore.eclhyj3.mongodb.net/?retryWrites=true&w=majority&appName=Rathore").then(()=>{
+const mongoURI = process.env.MONGODB_URI;
+mongoose.connect(mongoURI).then(()=>{
     console.log('Connected to MONGODB');
 }).catch((err)=>{
     console.log(err);
